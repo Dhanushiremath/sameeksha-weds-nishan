@@ -23,6 +23,7 @@ export function PhotoCarousel() {
       const frames = framesRef.current.filter(Boolean) as HTMLDivElement[];
       const mm = gsap.matchMedia();
 
+      // Desktop only: pinned horizontal ScrollTrigger
       mm.add("(min-width: 768px)", () => {
         const getScrollAmount = () =>
           -(track.scrollWidth - section.clientWidth);
@@ -61,24 +62,6 @@ export function PhotoCarousel() {
         });
       });
 
-      mm.add("(max-width: 767px)", () => {
-        frames.forEach((frame, i) => {
-          const baseRotation = weddingData.gallery[i]?.rotation ?? 0;
-          gsap.set(frame, { rotate: baseRotation });
-
-          gsap.to(frame, {
-            rotate: 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: frame,
-              start: "top 80%",
-              end: "center center",
-              scrub: true,
-            },
-          });
-        });
-      });
-
       return () => mm.revert();
     },
     { scope: sectionRef },
@@ -87,9 +70,9 @@ export function PhotoCarousel() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden bg-canvas py-16 md:h-[100dvh] md:py-0"
+      className="relative overflow-visible bg-canvas py-16 md:h-[100dvh] md:overflow-hidden md:py-0"
     >
-      <div className="pointer-events-none px-5 pt-10 text-center md:pt-12">
+      <div className="pointer-events-none px-5 pt-10 text-center md:absolute md:inset-x-0 md:top-12 md:z-10 md:pt-0">
         <p className="font-sans text-[0.7rem] tracking-[0.32em] text-burgundy/70 uppercase">
           Moments
         </p>
@@ -98,32 +81,39 @@ export function PhotoCarousel() {
         </h2>
       </div>
 
+      {/* Mobile: native horizontal swipe scroller (Lenis disabled on this node) */}
       <div
-        ref={trackRef}
-        className="flex w-max touch-pan-x gap-6 overflow-x-auto px-5 pt-8 pb-8 [-ms-overflow-style:none] [scrollbar-width:none] md:items-center md:overflow-visible md:px-16 md:pt-8 md:pb-0 [&::-webkit-scrollbar]:hidden"
+        data-lenis-prevent
+        className="w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain touch-pan-x pt-8 pb-8 [-ms-overflow-style:none] [scrollbar-width:none] [-webkit-overflow-scrolling:touch] md:overflow-visible md:snap-none md:pt-0 md:pb-0 [&::-webkit-scrollbar]:hidden"
       >
-        {weddingData.gallery.map((photo, index) => (
-          <div
-            key={photo.src}
-            ref={(el) => {
-              framesRef.current[index] = el;
-            }}
-            className="w-[78vw] max-w-[420px] shrink-0 will-change-transform sm:w-[55vw] md:w-[36vw]"
-            style={{ rotate: `${photo.rotation}deg` }}
-          >
-            <figure className="bg-sand p-3 shadow-sm">
-              <div className="relative aspect-[3/4] overflow-hidden bg-canvas">
-                <Image
-                  src={photo.src}
-                  alt={photo.alt}
-                  fill
-                  sizes="(max-width: 768px) 78vw, 36vw"
-                  className="object-cover object-top"
-                />
-              </div>
-            </figure>
-          </div>
-        ))}
+        <div
+          ref={trackRef}
+          className="flex w-max gap-6 px-5 md:h-[100dvh] md:items-center md:px-16"
+        >
+          {weddingData.gallery.map((photo, index) => (
+            <div
+              key={photo.src}
+              ref={(el) => {
+                framesRef.current[index] = el;
+              }}
+              className="w-[78vw] max-w-[420px] shrink-0 snap-center will-change-transform sm:w-[55vw] md:w-[36vw] md:snap-align-none"
+              style={{ rotate: `${photo.rotation}deg` }}
+            >
+              <figure className="bg-sand p-3 shadow-sm">
+                <div className="relative aspect-[3/4] overflow-hidden bg-canvas">
+                  <Image
+                    src={photo.src}
+                    alt={photo.alt}
+                    fill
+                    sizes="(max-width: 768px) 78vw, 36vw"
+                    className="object-cover object-top"
+                    draggable={false}
+                  />
+                </div>
+              </figure>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
