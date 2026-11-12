@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Source originals kept out of repo (served from public/)
+/Media*.jpeg
+/Media.jpeg
+/Hridayam*.mp3

@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --canvas: #f6f1eb;
+  --sand: #eae0d5;
+  --burgundy: #5c162e;
+  --gold: #b89758;
+  --ink: #2c2224;
+  --background: var(--canvas);
+  --foreground: var(--ink);
 }
 
 @theme inline {
+  --color-canvas: var(--canvas);
+  --color-sand: var(--sand);
+  --color-burgundy: var(--burgundy);
+  --color-gold: var(--gold);
+  --color-ink: var(--ink);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-cormorant);
+  --font-sans: var(--font-jakarta);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--canvas);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-jakarta), system-ui, sans-serif;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--burgundy) 22%, transparent);
+  color: var(--ink);
+}
+
+.paper-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+  opacity: 0.055;
+  mix-blend-mode: multiply;
+}
+
+@keyframes heart-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0) rotate(2deg);
+  }
+}
+
+.heart-float {
+  animation: heart-float 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+.heart-float-delay-1 {
+  animation-delay: -2.2s;
+}
+
+.heart-float-delay-2 {
+  animation-delay: -4.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heart-float,
+  .heart-float-delay-1,
+  .heart-float-delay-2 {
+    animation: none;
+  }
 }
